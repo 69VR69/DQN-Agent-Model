@@ -6,6 +6,7 @@ class ServerManager:
     ip = "127.0.0.1"
     port = 8888
     socket = None
+    is_response_expected = False
 
     def __init__(self):
         pass
@@ -19,11 +20,15 @@ class ServerManager:
 
 
     def send(self, message):
+        if self.is_response_expected:
+            print("still waiting for response...")
         print("sending : " + message)
         self.socket.send(message.encode())
+        self.is_response_expected = True
 
     def receive(self):
         message = self.socket.recv(1024).decode()
+        self.is_response_expected = False
         print("received : " + message)
         return message
 
