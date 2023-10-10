@@ -8,14 +8,26 @@ class ServerManager:
     socket = None
 
     def __init__(self):
+        pass
+    
+    def start(self):
+        print("server starting...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("connecting to server ("+self.ip + "/" + str(self.port) + ")...")
         self.socket.connect((self.ip, self.port))
+        print("connected to server")
 
-    def send(self, action):
-        self.socket.send(action.encode())
+
+    def send(self, message):
+        print("sending : " + message)
+        self.socket.send(message.encode())
 
     def receive(self):
-        return self.socket.recv(1024).decode()
+        message = self.socket.recv(1024).decode()
+        print("received : " + message)
+        return message
 
     def close(self):
+        print("closing connection...")
         self.socket.close()
+        print("connection closed")
