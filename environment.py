@@ -17,6 +17,7 @@ class Environment:
         TURN_RIGHT = 4,
         TURN_LEFT = 5,
         JUMP = 6,
+        WAIT = 7,
     
         @staticmethod
         def get_name_from_value(value):
@@ -26,19 +27,25 @@ class Environment:
             
     def start(self):
         self.server_manager.start()
-        self.reset()
             
     def stop(self):
         self.server_manager.stop()
             
     def reset(self):
         self.server_manager.send("reset")
+        message = self.server_manager.receive()
+        reward,state,done = self.parse_message(message)
+        return state
+
 
     def set_action(self, action):
         action = Environment.Action.get_name_from_value(action)
         self.server_manager.send("set_action:" + str(action))
         message = self.server_manager.receive()
+        return self.parse_message(message)
+    
+    def parse_message(self, message):
         #parse the reward, state and done from the message separated by :
-        self.reward, self.state, done = message.split(":") # reward (float), state (int), done (boolean)
-        return self.reward, self.state, done
+        self.reward, self.state, done = message.split(":") # reward (float), state (array2d of float), done (boolean)
+        return float(self.reward), self.state, done
 
