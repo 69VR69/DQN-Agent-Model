@@ -47,5 +47,16 @@ class Environment:
     def parse_message(self, message):
         #parse the reward, state and done from the message separated by :
         self.reward, self.state, done = message.split(":") # reward (float), state (array2d of float), done (boolean)
+        self.state = self.parseState(self.state)
         return float(self.reward), self.state, done
+    
+    def parseState(state):
+        #parse the state from the message. Columns are separated by ; and rows by ,
+        state = state.split(";")
+        for i in range(len(state)):
+            state[i] = state[i].split(",")
+            for j in range(len(state[i])):
+                state[i][j] = float(state[i][j])
+            
+        return state
 
