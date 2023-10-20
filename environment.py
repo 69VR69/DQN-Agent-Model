@@ -2,6 +2,7 @@
 # the class can communicate with the unity environment through the server_manager class (send/receive)
 from server_manager import ServerManager
 from enum import Enum
+import numpy as np
 
 class Environment:
     def __init__(self):
@@ -21,6 +22,10 @@ class Environment:
     
         @staticmethod
         def get_name_from_value(value):
+            # transform int to tuple
+            if isinstance(value, int):
+                value = (value,)
+            
             for name, member in Environment.Action.__members__.items():
                 if member.value == value:
                     return name
@@ -47,16 +52,22 @@ class Environment:
     def parse_message(self, message):
         #parse the reward, state and done from the message separated by :
         self.reward, self.state, done = message.split(":") # reward (float), state (array2d of float), done (boolean)
-        self.state = self.parseState(self.state)
+        self.state = self.parse_state(self.state)
         return float(self.reward), self.state, done
     
-    def parseState(state):
+    def parse_state(self, state):
         #parse the state from the message. Columns are separated by ; and rows by ,
         state = state.split(";")
+        state_widht = len(state[0].split(","))
+        state_height = len(state)
+        res = np.zeros((state_height, state_widht),dtype=np.float32)
         for i in range(len(state)):
+            if(state[i] == "" or state[i] == ''):
+                continue
             state[i] = state[i].split(",")
             for j in range(len(state[i])):
-                state[i][j] = float(state[i][j])
+                if(state[i][j] == "" or state[i][j] == ''):
+                    continue
+                res[i][j] = state[i][j]
             
-        return state
-
+        return res
