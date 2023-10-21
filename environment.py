@@ -1,12 +1,12 @@
 # class that represent the unity's environment with actions to send to unity and receive the state and reward from unity
 # the class can communicate with the unity environment through the server_manager class (send/receive)
-from server_manager import ServerManager
+from server_manager import ServerManager, ServerManagerMock
 from enum import Enum
 import numpy as np
 
 class Environment:
     def __init__(self):
-        self.server_manager = ServerManager()
+        self.server_manager = ServerManagerMock()#ServerManager()
         self.state = None
         self.reward = None
 
