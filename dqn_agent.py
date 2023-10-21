@@ -34,6 +34,7 @@ class DQNAgent:
 
         batch = random.sample(self.replay_buffer, batch_size)
         states, actions, rewards, next_states, dones = zip(*batch)
+        print("dones : ", dones)
 
         states = torch.cat(states)
         actions = torch.tensor(actions, dtype=torch.long)
@@ -42,10 +43,12 @@ class DQNAgent:
         dones = torch.tensor(dones, dtype=torch.uint8)
 
         q_values = self.q_network(states)
+        q_values = q_values.view(batch_size, self.action_size) # reshape to (batch_size, action_size)
         q_values_next = self.target_network(next_states)
-        max_q_values_next, _ = torch.max(q_values_next, dim=1)
+        max_q_values_next, _ = torch.max(q_values_next, dim=0)
 
         target_q_values = q_values.clone()
+        print(target_q_values.shape)
         for i in range(batch_size):
             if dones[i]:
                 target_q_values[i, actions[i]] = rewards[i]

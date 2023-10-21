@@ -56,7 +56,7 @@ class Environment:
         #parse the reward, state and done from the message separated by :
         self.reward, self.state, done = message.split(":") # reward (float), state (array2d of float), done (boolean)
         self.state = self.parse_state(self.state)
-        return float(self.reward), self.state, bool(done)
+        return float(self.reward), self.state, done == 1
     
     def parse_state(self, state):
         #parse the state from the message. Columns are separated by ; and rows by ,
