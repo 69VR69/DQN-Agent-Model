@@ -34,7 +34,7 @@ class DQNAgent:
 
         batch = random.sample(self.replay_buffer, batch_size)
         states, actions, rewards, next_states, dones = zip(*batch)
-        print("dones : ", dones)
+        print("states : ", states)
 
         states = torch.cat(states)
         actions = torch.tensor(actions, dtype=torch.long)
