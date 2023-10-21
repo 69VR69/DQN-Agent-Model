@@ -25,7 +25,7 @@ class TrainingLoop:
 
                 self.agent.train(self.batch_size, self.gamma)
 
-            print(f"Episode {episode}: Total Reward: {total_reward}")
+            print(f"Episode {episode}: Total Reward: {total_reward}\n")
 
         self.agent.save_model("dqn_model.pth")
 

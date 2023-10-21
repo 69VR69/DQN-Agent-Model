@@ -46,6 +46,9 @@ class Environment:
     def set_action(self, action):
         action = Environment.Action.get_name_from_value(action)
         self.server_manager.send("set_action:" + str(action))
+        return self.get_info()
+    
+    def get_info(self):
         message = self.server_manager.receive()
         return self.parse_message(message)
     
@@ -53,14 +56,12 @@ class Environment:
         #parse the reward, state and done from the message separated by :
         self.reward, self.state, done = message.split(":") # reward (float), state (array2d of float), done (boolean)
         self.state = self.parse_state(self.state)
-        return float(self.reward), self.state, done
+        return float(self.reward), self.state, bool(done)
     
     def parse_state(self, state):
         #parse the state from the message. Columns are separated by ; and rows by ,
         state = state.split(";")
-        state_widht = len(state[0].split(","))
-        state_height = len(state)
-        res = np.zeros((state_height, state_widht),dtype=np.float32)
+        res = []
         for i in range(len(state)):
             if(state[i] == "" or state[i] == ''):
                 continue
@@ -68,6 +69,41 @@ class Environment:
             for j in range(len(state[i])):
                 if(state[i][j] == "" or state[i][j] == ''):
                     continue
-                res[i][j] = state[i][j]
+                res.append(state[i][j])
             
+        res= np.array(res, dtype=np.float32).reshape(1,27)
         return res
+
+# # test parse_state
+# state = "0,0,0,-1,0,0,-1,0,0;0,0,0,0,1,0,0,0,0;0,0,0,0,0,0,0,0,0;"
+# env = Environment()
+# print(env.parse_state(state))
+
+    # def parse_state(self, state):
+    #     #parse the state from the message. Columns are separated by ; and rows by ,
+    #     state = state.split(";")
+    #     state_widht = len(state[0].split(","))
+    #     state_height = len(state)
+    #     res = np.zeros((state_height, state_widht),dtype=np.float32)
+    #     for i in range(len(state)):
+    #         if(state[i] == "" or state[i] == ''):
+    #             continue
+    #         state[i] = state[i].split(",")
+    #         for j in range(len(state[i])):
+    #             if(state[i][j] == "" or state[i][j] == ''):
+    #                 continue
+    #             res[i][j] = state[i][j]
+            
+    #     return res
+
+    def summary(self):
+        reward, state, done = self.get_info()
+        
+        #transforme the reward, state and done to a json format with value, shape and type
+        reward = {"value": reward, "shape": 1, "type": str(type(reward))}
+        state = {"value": state, "shape": state.shape, "type": str(state.dtype)}
+        done = {"value": done, "shape": 1, "type": str(type(done))}
+
+        print("reward: ", reward)
+        print("state: ", state)
+        print("done: ", done)

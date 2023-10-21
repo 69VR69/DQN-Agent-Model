@@ -12,3 +12,7 @@ class QNetwork(nn.Module):
         x = torch.relu(self.fc1(x))
         x = self.fc2(x)
         return x
+    
+    #add a summary method to print out the network architecture
+    def summary(self):
+        print(self)

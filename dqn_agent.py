@@ -4,7 +4,8 @@ import torch.optim as optim
 import random
 from dqn_network import QNetwork
 
-class DQNAgent:    
+
+class DQNAgent:
     def __init__(self, state_size, action_size, learning_rate=0.001):
         self.state_size = state_size
         self.action_size = action_size
@@ -49,7 +50,9 @@ class DQNAgent:
             if dones[i]:
                 target_q_values[i, actions[i]] = rewards[i]
             else:
-                target_q_values[i, actions[i]] = rewards[i] + gamma * max_q_values_next[i]
+                target_q_values[i, actions[i]] = (
+                    rewards[i] + gamma * max_q_values_next[i]
+                )
 
         loss = nn.MSELoss()(q_values, target_q_values)
         self.optimizer.zero_grad()
