@@ -18,7 +18,12 @@ class TrainingLoop:
                 epsilon = max(0.1, 1.0 - episode / 500)
                 state_tensor = torch.tensor(state, dtype=torch.float).unsqueeze(0)
                 action = self.agent.select_action(state_tensor, epsilon)
-                next_state, reward, done = self.env_interface.set_action(action)
+                reward, next_state, done = self.env_interface.set_action(action)
+                #print("state_tensor : ", state_tensor.shape)
+                #print("state_tensor : ", state_tensor)
+                #print("next_state : ", next_state.shape)
+                #print("next_state : ", next_state)
+                #print()
                 self.agent.store_experience(state_tensor, action, reward, torch.tensor(next_state, dtype=torch.float).unsqueeze(0), done)
                 state = next_state
                 total_reward += reward

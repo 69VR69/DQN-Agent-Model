@@ -1,6 +1,5 @@
 import socket
 
-
 # Create a class to manage the socket connection
 class ServerManager:
     def __init__(self):
@@ -16,19 +15,21 @@ class ServerManager:
         self.socket.connect((self.ip, self.port))
         print("connected to server")
 
+    def is_running(self):
+        return self.socket is not None
 
     def send(self, message):
         if self.is_response_expected:
             print("still waiting for response...")
             return
-        print("sending : " + message)
+        #print("sending : " + message)
         self.socket.send(message.encode())
         self.is_response_expected = True
 
     def receive(self):
         message = self.socket.recv(1024).decode()
         self.is_response_expected = False
-        print("received : " + message)
+        #print("received : " + message)
         return message
 
     def close(self):
@@ -36,7 +37,7 @@ class ServerManager:
         self.socket.close()
         print("connection closed")
 
-class ServerManagerMock:
+class ServerManagerMock(ServerManager):
     def __init__(self):
         self.socket = None
         self.is_response_expected = False
@@ -47,18 +48,19 @@ class ServerManagerMock:
         print("server starting...")
         print("connecting to server ("+self.ip + "/" + str(self.port) + ")...")
         print("connected to server")
+        self.socket = 1
 
     def send(self, message):
         if self.is_response_expected:
             print("still waiting for response...")
             return
-        print("sending : " + message)
+        #print("sending : " + message)
         self.is_response_expected = True
     
     def receive(self):
         message = "0:0,0,0,-1,0,0,-1,0,0;0,0,0,0,1,0,0,0,0;0,0,0,0,0,0,0,0,0;:0"
         self.is_response_expected = False
-        print("received : " + message)
+        #print("received : " + message)
         return message
     
     def close(self):

@@ -32,6 +32,9 @@ class Environment:
             
     def start(self):
         self.server_manager.start()
+
+    def is_running(self):
+        return self.server_manager.is_running()
             
     def stop(self):
         self.server_manager.stop()
@@ -42,11 +45,13 @@ class Environment:
         reward,state,done = self.parse_message(message)
         return state
 
-
     def set_action(self, action):
         action = Environment.Action.get_name_from_value(action)
         self.server_manager.send("set_action:" + str(action))
         return self.get_info()
+    
+    def get_state(self):
+        return self.server_manager.send("get_state")
     
     def get_info(self):
         message = self.server_manager.receive()
