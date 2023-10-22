@@ -4,7 +4,6 @@ class Model:
     def __init__(self, epsilon = 0.99, num_actions = 9):
         self.epsilon = epsilon
         self.num_actions = num_actions
-        pass
 
     def get_action(self, state):
         # get a random number between 0 and 1

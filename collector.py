@@ -1,6 +1,6 @@
 from environment import Environment
 from batch import Batch, Experience
-from DQNModel import Model
+from model import Model
 
 class Collector:
     def __init__(self, batch_size, model = Model()):
@@ -11,6 +11,12 @@ class Collector:
     def fill_batch(self, env):
         while not self.batch.is_full():
             self.batch.add(self.collect_experience(env))
+
+    def get_batch(self):
+        return self.batch
+    
+    def flush_batch(self):
+        self.batch = Batch(self.batch_size)
     
     def collect_experience(self, env):
         if not env.is_running():
@@ -22,7 +28,7 @@ class Collector:
         action = self.model.get_action(current_state)
 
         # send action to server
-        reward, next_state, done = env.send_action(action)
+        reward, next_state, done = env.set_action(action)
 
         return Experience(current_state, action, reward, next_state, done)
     
