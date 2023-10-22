@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import random
 
-class QNetwork:
+class QNetwork(nn.Module):
     def __init__(self, state_size, action_size, fc1_units=64, fc2_units=64):
         """Initialize parameters and build model.
         Params
@@ -13,6 +13,7 @@ class QNetwork:
             fc1_units (int): Number of nodes in first hidden layer (64)
             fc2_units (int): Number of nodes in second hidden layer (64)
         """
+        super(QNetwork, self).__init__()
         self.state_size = state_size
         self.action_size = action_size
         self.seed = torch.manual_seed(random.randint(0, 1000))
