@@ -3,8 +3,9 @@ import random
 import torch
 from torch.optim import Adam
 
+
 class Model:
-    def __init__(self, epsilon = 0.99, num_state = 27,num_actions = 9, learning_rate = 0.001):
+    def __init__(self, epsilon=0.99, num_state=27, num_actions=9, learning_rate=0.001):
         self.epsilon = epsilon
         self.num_state = num_state
         self.num_actions = num_actions
@@ -19,32 +20,36 @@ class Model:
             return random.randint(0, self.num_actions - 1)
         else:
             return self.get_best_action(state)
-        
+
     def get_best_action(self, state):
         # get the best action for the state
-        return  self.q_network.forward(state).argmax().item()
-    
+        return self.q_network.forward(state).argmax().item()
+
     def get_loss(self, states, actions, q_targets):
         # get the loss for the state, action and q_target
         predict = self.q_network.forward(states)
-        return predict.sub(q_targets).square().mul(actions).mean()
-    
+        print("predict", predict)
+        return torch.mean(
+            torch.mul(torch.square(torch.sub(predict, q_targets)), actions)
+        )
+
     def get_q_target(self, states, gammas, rewards):
-        predict = self.q_network.forward(states).max(1)
-        predict_masked = predict.mul(gammas).add(rewards)
-        Qtargets = torch.tensor(predict_masked.buffer().values, shape=[len(states), 1])
+        predict = self.q_network.forward(states).max(1).values[:, None]
+        predict_masked = torch.mul(gammas, predict)
+        Qtargets = torch.tensor(predict_masked.add(rewards), requires_grad=True)
         return Qtargets
-    
-# Test
-model = Model()
-# test get q target
-states = torch.randn(10, 27)
-gammas = torch.randn(10, 1)
-rewards = torch.randn(10, 1)
-q_targets = model.get_q_target(states, gammas, rewards)
-print(q_targets)
-# test get loss
-states = torch.randn(10, 27)
-actions = torch.randn(10, 9)
-loss = model.get_loss(states, actions, q_targets)
-print(loss)
+
+
+# # Test
+# model = Model()
+# # test get q target
+# states = torch.randn(10, 27)
+# gammas = torch.randn(10, 1)
+# rewards = torch.randn(10, 1)
+# q_targets = model.get_q_target(states, gammas, rewards)
+# print("q_targets",q_targets)
+# # test get loss
+# states = torch.randn(10, 27)
+# actions = torch.randn(10, 9)
+# loss = model.get_loss(states, actions, q_targets)
+# print("loss", loss)
