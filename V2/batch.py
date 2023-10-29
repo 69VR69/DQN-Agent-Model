@@ -13,7 +13,7 @@ class Batch:
     
     def get_states(self):
         return [experience.state for experience in self.experiences]
-    
+
     def get_actions(self):
         return [experience.action for experience in self.experiences]
     

@@ -33,8 +33,8 @@ class Collector:
             self.env.reset()
 
         # get action
-        current_state = torch.tensor(self.env.get_state(), dtype=torch.float32)
-        action = self.model.get_action(current_state)
+        current_state = self.env.get_state()
+        action = self.model.get_action(torch.tensor(current_state, dtype=torch.float32))
 
         # send action to server
         reward, next_state, done = self.env.set_action(action)

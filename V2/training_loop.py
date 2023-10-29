@@ -17,7 +17,7 @@ class TrainingLoop:
     def run(self):
         for i in range(self.num_episodes):
             batch = self.collector.get_batch_from_env()
-            print("Batch collected :", batch)
+           # print("Batch collected :", batch)
             self.train(batch)
             if(i % 5 == 0):
                 print("Episode: " + str(i) + "=>\n\tmean loss: " + str(np.mean(self.losses)) + "\n\tmean reward: " + str(np.mean(self.rewards)))

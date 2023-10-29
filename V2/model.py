@@ -34,8 +34,13 @@ class Model:
         )
 
     def get_q_target(self, next_states, gammas, rewards):
-        predict = self.q_network.forward(next_states).max(1).values[:, None]
-        predict_masked = torch.mul(gammas, predict)
+        predict = self.q_network.forward(next_states).max(1).values
+        gammas = gammas[None, :]
+        print(" shape of predict", predict.shape)
+        print(" shape of gammas", gammas.shape)
+        predict_masked = torch.mm(gammas, predict)
+        print("predict value", predict)
+        print("rewards value", rewards)
         Qtargets = torch.tensor(predict_masked.add(rewards), requires_grad=True)
         return Qtargets
 

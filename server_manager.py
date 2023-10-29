@@ -1,5 +1,6 @@
 import socket
 import re
+import numpy as np
 
 # Create a class to manage the socket connection
 class ServerManager:
