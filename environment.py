@@ -41,9 +41,7 @@ class Environment:
             
     def reset(self):
         self.server_manager.send("reset")
-        message = self.server_manager.receive()
-        reward,state,done = self.parse_message(message)
-        return state
+        return self.get_info()[1]
 
     def set_action(self, action):
         action = Environment.Action.get_name_from_value(action)
@@ -51,7 +49,9 @@ class Environment:
         return self.get_info()
     
     def get_state(self):
-        return self.server_manager.send("get_state")
+        self.server_manager.send("get_state")
+        message = self.server_manager.receive()
+        return self.parse_state(message)
     
     def get_info(self):
         message = self.server_manager.receive()

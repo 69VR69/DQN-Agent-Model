@@ -1,4 +1,5 @@
 import socket
+import re
 
 # Create a class to manage the socket connection
 class ServerManager:
@@ -43,6 +44,7 @@ class ServerManagerMock(ServerManager):
         self.is_response_expected = False
         self.ip = "127.0.0.1"
         self.port = 8888
+        self.received_message = 0
     
     def start(self):
         print("server starting...")
@@ -55,10 +57,21 @@ class ServerManagerMock(ServerManager):
             print("still waiting for response...")
             return
         #print("sending : " + message)
+        if(message == "reset"):
+            self.received_message = 0
+        elif(re.search("set_action", message)):
+            self.received_message = 1
+        elif(message == "get_state"):
+            self.received_message = 2
         self.is_response_expected = True
     
     def receive(self):
-        message = "0:0,0,0,-1,0,0,-1,0,0;0,0,0,0,1,0,0,0,0;0,0,0,0,0,0,0,0,0;:0"
+        if(self.received_message == 0):
+            message = "0:0,0,0,-1,0,0,-1,0,0;0,0,0,0,1,0,0,0,0;0,0,0,0,0,0,0,0,0;:0"
+        elif(self.received_message == 1):
+            message = "0:0,0,0,-1,0,0,-1,0,0;0,0,0,0,1,0,0,0,0;0,0,0,0,0,0,0,0,0;:0"
+        elif(self.received_message == 2):
+            message = "0,0,0,-1,0,0,-1,0,0;0,0,0,0,1,0,0,0,0;0,0,0,0,0,0,0,0,0;"
         self.is_response_expected = False
         #print("received : " + message)
         return message

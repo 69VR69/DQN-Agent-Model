@@ -1,3 +1,5 @@
+import numpy as np
+import torch
 from collector import Collector
 from model import Model
 from environment import Environment
@@ -7,32 +9,39 @@ class TrainingLoop:
         self.batch_size = batch_size
         self.num_episodes = num_episodes
         self.model = model
-        self.collector = Collector(batch_size, model)
         self.env = Environment()
+        self.collector = Collector(self.batch_size, self.model, self.env)
+        self.losses = []
+        self.rewards = []
 
     def run(self):
         for i in range(self.num_episodes):
-            self.collector.fill_batch(self.env)
-            batch = self.collector.get_batch()
-            self.collector.flush_batch()
+            batch = self.collector.get_batch_from_env()
+            print("Batch collected :", batch)
             self.train(batch)
+            if(i % 5 == 0):
+                print("Episode: " + str(i) + "=>\n\tmean loss: " + str(np.mean(self.losses)) + "\n\tmean reward: " + str(np.mean(self.rewards)))
 
     def train(self, batch):
-        states = batch.get_states()
-        actions = batch.get_actions()
-        rewards = batch.get_rewards()
-        next_states = batch.get_next_states()
-        dones = batch.get_dones()
+        states = torch.tensor(batch.get_states(), dtype=torch.float32)
+        actions = torch.tensor(batch.get_actions(), dtype=torch.float32)
+        rewards = torch.tensor(batch.get_rewards(), dtype=torch.float32)
+        next_states = torch.tensor(batch.get_next_states(), dtype=torch.float32)
+        dones = torch.tensor(batch.get_dones(), dtype=torch.bool)
 
         gammas = self.model.get_gamma(dones)
-        q_targets = self.model.get_q_target(states, gammas, rewards)
-        loss = self.model.get_loss(states, actions, q_targets)
+        q_targets = self.model.get_q_target(next_states, gammas, rewards)
 
         self.model.optimiser.zero_grad()
+        loss = self.model.get_loss(states, actions, q_targets)
         loss.backward()
         self.model.optimiser.step()
 
-        self.model.epsilon = self.model.epsilon * 0.99
+        # For logging
+        self.rewards.append(rewards)
+        self.losses.append(loss)
+
+        self.model.epsilon = max(0.1, self.model.epsilon * 0.99)
 
     def get_model(self):
         return self.model

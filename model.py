@@ -29,13 +29,12 @@ class Model:
     def get_loss(self, states, actions, q_targets):
         # get the loss for the state, action and q_target
         predict = self.q_network.forward(states)
-        print("predict", predict)
         return torch.mean(
             torch.mul(torch.square(torch.sub(predict, q_targets)), actions)
         )
 
-    def get_q_target(self, states, gammas, rewards):
-        predict = self.q_network.forward(states).max(1).values[:, None]
+    def get_q_target(self, next_states, gammas, rewards):
+        predict = self.q_network.forward(next_states).max(1).values[:, None]
         predict_masked = torch.mul(gammas, predict)
         Qtargets = torch.tensor(predict_masked.add(rewards), requires_grad=True)
         return Qtargets
