@@ -10,6 +10,21 @@ class Batch:
 
     def is_full(self):
         return len(self.experiences) >= self.batch_size
+    
+    def get_states(self):
+        return [experience.state for experience in self.experiences]
+    
+    def get_actions(self):
+        return [experience.action for experience in self.experiences]
+    
+    def get_rewards(self):
+        return [experience.reward for experience in self.experiences]
+    
+    def get_next_states(self):
+        return [experience.next_state for experience in self.experiences]
+    
+    def get_dones(self):
+        return [experience.done for experience in self.experiences]
 
     # to string
     def __str__(self):

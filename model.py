@@ -5,8 +5,9 @@ from torch.optim import Adam
 
 
 class Model:
-    def __init__(self, epsilon=0.99, num_state=27, num_actions=9, learning_rate=0.001):
+    def __init__(self, epsilon=0.99, gamma = 0.99, num_state=27, num_actions=9, learning_rate=0.001):
         self.epsilon = epsilon
+        self.gamma = gamma
         self.num_state = num_state
         self.num_actions = num_actions
         self.q_network = QNetwork(num_state, num_actions)
@@ -39,17 +40,5 @@ class Model:
         Qtargets = torch.tensor(predict_masked.add(rewards), requires_grad=True)
         return Qtargets
 
-
-# # Test
-# model = Model()
-# # test get q target
-# states = torch.randn(10, 27)
-# gammas = torch.randn(10, 1)
-# rewards = torch.randn(10, 1)
-# q_targets = model.get_q_target(states, gammas, rewards)
-# print("q_targets",q_targets)
-# # test get loss
-# states = torch.randn(10, 27)
-# actions = torch.randn(10, 9)
-# loss = model.get_loss(states, actions, q_targets)
-# print("loss", loss)
+    def get_gamma(self, dones):
+        return torch.mul(torch.tensor(self.gamma), torch.logical_not(dones))
