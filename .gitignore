@@ -138,4 +138,6 @@ ui-tests/playwright-report
 .pnp.*
 ui-tests/.yarn/*
 ui-tests/.pnp.*
-__pycache__/*
+__pycache__/*.*
+
+models/*.*
