@@ -24,14 +24,14 @@ class ServerManager:
         if self.is_response_expected:
             print("still waiting for response...")
             return
-        #print("sending : " + message)
-        self.socket.send(message.encode())
+        print("sending : " + message)
+        self.socket.send(message.encode() + b"\n")
         self.is_response_expected = True
 
     def receive(self):
         message = self.socket.recv(1024).decode()
         self.is_response_expected = False
-        #print("received : " + message)
+        print("received : " + message)
         return message
 
     def close(self):

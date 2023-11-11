@@ -3,10 +3,11 @@
 from server_manager import ServerManager, ServerManagerMock
 from enum import Enum
 import numpy as np
+import CONSTANTS as C
 
 class Environment:
     def __init__(self):
-        self.server_manager = ServerManagerMock()#ServerManager()
+        self.server_manager = ServerManager()
         self.state = None
         self.reward = None
 
@@ -75,8 +76,8 @@ class Environment:
                 if(state[i][j] == "" or state[i][j] == ''):
                     continue
                 res.append(state[i][j])
-            
-        res= np.array(res, dtype=np.float32).reshape(1,27)
+        print("parse resr: ", res)
+        res= np.array(res, dtype=np.float32).reshape(1,C.SPACE_SIZE)
         return res
 
 # # test parse_state

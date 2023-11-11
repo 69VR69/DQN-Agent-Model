@@ -2,6 +2,7 @@ import gymnasium
 from gymnasium import spaces
 import numpy as np
 from environment import Environment
+import CONSTANTS as C
 
 
 class CustomUnityEnv(gymnasium.Env):
@@ -14,9 +15,9 @@ class CustomUnityEnv(gymnasium.Env):
 
         # Define your observation and action spaces
         self.observation_space = spaces.Box(
-            low=0, high=1, shape=(27,), dtype=np.float32
+            low=0, high=1, shape=(C.SPACE_SIZE,), dtype=np.float32
         )
-        self.action_space = spaces.Discrete(8)  # Assuming 8 possible actions
+        self.action_space = spaces.Discrete(C.ACTION_NUMBER)  # Assuming "C.ACTION_NUMBER" possible actions
 
         # Initialize variables
         self.state = None
